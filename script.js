@@ -64,11 +64,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Function to check if non-transparent pixels are within a circle
   function isNonTransparentWithinCircle(image) {
-      // Implement logic to check if non-transparent pixels are within a circle
+    const canvas = document.createElement("canvas");
+    canvas.width = image.width;
+    canvas.height = image.height;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(image, 0, 0);
+
+    const data = ctx.getImageData(0, 0, image.width, image.height).data;
+    const centerX = image.width / 2;
+    const centerY = image.height / 2;
+    const radius = Math.min(centerX, centerY);
+
+    for (let i = 0; i < data.length; i += 4) {
+      const x = i / 4 % image.width;
+      const y = Math.floor(i / 4 / image.width);
+      const distanceFromCenter = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
+
+      if (distanceFromCenter > radius && data[i + 3] !== 0) { // Check for non-transparent pixel outside circle
+        return false;
+      }
+    }
+
+    return true;
   }
 
   // Function to check if colors give a "happy" feeling
   function isHappyColorPalette(image) {
       // Implement logic to check if colors convey a "happy" feeling
+      // Couldn't find a satisfying solution for this one.
   }
 });
